@@ -1,7 +1,8 @@
 import Head from 'next/head'
 import { useState } from 'react'
+import styled from 'styled-components'
 import Block from '../components/Block'
-import { BlockTypes } from '../config/blocks'
+import { BlockSources, BlockTypes } from '../config/blocks'
 
 
 
@@ -36,6 +37,43 @@ const ModeSwitcher = ({ isEditor, setIsEditor }) => {
   )
 }
 
+const BlockSourceCard = styled(({ className = '', title, children }) => {
+  return (
+    <div className={className} title='Drag and drop me into the WYSIWYG editor'>
+      <h5>{title}</h5>
+      {children}
+    </div>
+  )
+})`
+background: black;
+color: white;
+border-radius: 8px;
+padding: .5rem 1rem;
+max-width: 400px;
+h5 {
+  margin: 0.5rem 0;
+}
+`
+
+const BlocksSource = () => {
+  const blocks = BlockSources
+  return <div>
+    {blocks.map(({ type, description }) => {
+      return (
+        <BlockSourceCard
+          className='BlockSourceCard'
+          key={type}
+          title={type}
+        >
+          <p>
+            {description}
+          </p>
+        </BlockSourceCard>
+      )
+    })}
+  </div>
+}
+
 export default function Home() {
   const [isEditor, setIsEditor] = useState(true)
   const [exampleBlocks, setExampleBlocks] = useState([
@@ -50,8 +88,12 @@ export default function Home() {
         <meta name="description" content="WYSIWYG editor/viewer" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <BlocksContainer blocks={exampleBlocks} setBlocks={setExampleBlocks} isEditor={isEditor} />
       <ModeSwitcher isEditor={isEditor} setIsEditor={setIsEditor}/>
+      <details><summary>Editor</summary>
+        <BlocksSource/>
+        {isEditor && <BlocksContainer blocks={exampleBlocks} setBlocks={setExampleBlocks} isEditor={isEditor} />}
+      </details>
+      {!isEditor && <BlocksContainer blocks={exampleBlocks} setBlocks={setExampleBlocks} isEditor={isEditor} />}
     </>
   )
 }
